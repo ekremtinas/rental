@@ -1,0 +1,540 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rental Drone</title>
+
+  <!-- 
+    - favicon
+  -->
+  <link rel="shortcut icon" href="{% static '/'|add:'favicon.svg' %}" type="image/svg+xml">
+
+  <!-- 
+    - custom css link
+    ./assets/css/style.css
+  -->
+  <link rel="stylesheet" href="{% static 'css/'|add:'style.css' %}">
+
+  <!-- 
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Open+Sans&display=swap"
+    rel="stylesheet">
+    <style>
+      @media (min-width: 768px){
+      .hero-banner {
+          width:1268px !important;
+          background: url(https://setav.org/assets/uploads/2021/08/akinci_slider.png) no-repeat !important;
+          
+          background-size: cover !important;
+      }
+    }
+    .form-select {
+      display: block;
+      width: 100%;
+      padding: .375rem 2.25rem .375rem .75rem;
+      -moz-padding-start: calc(0.75rem - 3px);
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      background-color: #F1F5FC !important;
+    
+      background-repeat: no-repeat;
+      background-position: right .75rem center;
+      background-size: 16px 12px;
+      border: none !important;
+      border-radius: .25rem;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      color: var(--space-cadet);
+      outline: 2px solid transparent;
+      outline-offset: 5px;
+      border-radius: 4px;
+      transition: var(--transition);
+  }
+  @media (min-width: 768px){
+  .hero-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr !important;
+  }
+}
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      const onRentalHandler=(iha_id)=>{
+        
+        let startdate=$("#startdate").val();
+        let enddate=$("#enddate").val();
+        $.ajax({
+          url: "/rental",
+          method: "POST",
+          data: {
+              'startdate': startdate,
+              'enddate': enddate,
+              'user_id': {{user.id}},
+              'iha_id': iha_id,
+              'csrfmiddlewaretoken': '{{ csrf_token }}'
+          },
+          success: function(response) {
+              console.log(response);
+              if(response.status)
+              {
+                alert("Rentaled")
+              }
+              // Burada yanıtı kullanarak IHA kartını güncelleyebilirsiniz.
+          }
+      });
+      }
+    </script>
+</head>
+
+<body>
+
+  <!-- 
+    - #HEADER
+  -->
+
+  <header class="header" data-header>
+    <div class="container">
+
+      <div class="overlay" data-overlay></div>
+
+      <h1 class="h3 hero-title">
+
+        Rental Drone
+      </h1>
+
+      <nav class="navbar" data-navbar>
+        <ul class="navbar-list">
+
+          <li>
+            <a href="#home" class="navbar-link" data-nav-link>Home</a>
+          </li>
+
+          <li>
+            <a href="#featured-car" class="navbar-link" data-nav-link>Explore drones</a>
+          </li>
+
+          <li>
+            <a href="#" class="navbar-link" data-nav-link>About us</a>
+          </li>
+
+          <li>
+            <a href="#blog" class="navbar-link" data-nav-link>Blog</a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+
+        <div class="header-contact">
+          <a href="tel:88002345678" class="contact-link">0 212 254 545</a>
+
+          <span class="contact-time">Mom - Sat: 9:00 - 18:00 </span>
+        </div>
+
+        <a href="#featured-car" class="btn" aria-labelledby="aria-label-txt">
+          <ion-icon name="car-outline"></ion-icon>
+
+          <span id="aria-label-txt">Explore drones</span>
+        </a>
+
+        <a href="{% url 'my_rentals' %}" class="btn user-btn" aria-label="Profile">
+          <ion-icon name="person-outline"></ion-icon>
+        </a>
+      
+        <a href="{% url 'login' %}" class="btn login-btn" aria-label="Login">
+          
+          Login
+        </a>
+      
+
+        <button class="nav-toggle-btn" data-nav-toggle-btn aria-label="Toggle Menu">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="three"></span>
+        </button>
+
+      </div>
+
+    </div>
+  </header>
+
+
+
+
+
+  <main>
+    <article>
+
+      <!-- 
+        - #HERO
+      -->
+
+      <section class="section hero" id="home">
+        <div class="container">
+
+          <div class="hero-content">
+            <h2 class="h1 hero-title">The easy way to takeover a lease</h2>
+
+            <p class="hero-text">
+              Live in Istanbul,Ankara,Konya!
+            </p>
+          </div>
+
+          <div class="hero-banner"></div>
+
+          <form action="" method="post" class="hero-form">
+            {% csrf_token %}
+            <div class="input-wrapper">
+              <label for="input-3" class="input-label">Category</label>
+              <select id="categories" class="form-select input-field" placeholder="Category" name="category">
+                <option value="">All</option>
+                {% for item in categories %}
+                  <option value="{{ item.id }}">{{ item.kategori_adi }}</option>
+                {% endfor %}
+              </select>
+             
+            </div>
+            <div class="input-wrapper">
+              <label for="input-1" class="input-label">Brands</label>
+
+              <select id="brands"  class="form-select input-field" placeholder="Brands" name="brand">
+                <option value="">All</option>
+                 {% for item in brands %}
+                  <option value="{{ item.id }}">{{ item.marka_adi }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="input-wrapper">
+              <label for="input-1" class="input-label">Models</label>
+
+              <select id="models" class="form-select input-field" placeholder="Models" name="model">
+                <option value="">All</option>
+                {% comment %} {% for item in models %}
+                  <option value="{{ item.id }}">{{ item.model_adi }}</option>
+                {% endfor %} {% endcomment %}
+              </select>
+            </div>
+
+            <div class="input-wrapper">
+              <label for="input-2" class="input-label">Max. hour payment</label>
+
+              <input type="text" name="max-hour-pay" id="input-2" class="input-field" placeholder="Add an amount in $">
+            </div>
+
+          
+
+            <button type="submit" class="btn">Search</button>
+
+          </form>
+
+        </div>
+      </section>
+
+
+
+
+
+      <!-- 
+        - #FEATURED CAR
+      -->
+
+      <section class="section featured-car" id="featured-car">
+        <div class="container">
+
+          <div class="title-wrapper">
+            <h2 class="h2 section-title">Featured drones</h2>
+         
+
+            <a href="#" class="featured-car-link">
+              <span>View more</span>
+
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </a>
+     
+          </div>
+          <label for="startdate">Start Date</label>
+          <input
+          id="startdate"
+          type="datetime-local"
+          name="startdate"
+          value="2023-04-21T02:30" />
+          <label for="enddate">End Date</label>
+          <input
+            id="enddate"
+            type="datetime-local"
+            name="enddate"
+            value="2023-04-21T05:30" />
+          <ul class="featured-car-list">
+
+
+            {% for item in  drones %}
+            <li>
+              <div class="featured-car-card">
+
+                <figure class="card-banner">
+                  <img src="{{ item.resim }}" alt="{{item.iha_adi}}" loading="lazy" width="440" height="300"
+                    class="w-100">
+                </figure>
+
+                <div class="card-content">
+
+                  <div class="card-title-wrapper">
+                    <h3 class="h3 card-title">
+                      <a href="#">{{item.iha_adi}}</a>
+                    </h3>
+
+                    <data class="year" value="2023">2023</data>
+                  </div>
+
+                  <ul class="card-list">
+
+                    <li class="card-list-item">
+                      <ion-icon name="people-outline"></ion-icon>
+
+                      <span class="card-item-text">0 People</span>
+                    </li>
+
+                    <li class="card-list-item">
+                      <ion-icon name="flash-outline"></ion-icon>
+
+                      <span class="card-item-text">Hybrid</span>
+                    </li>
+
+                    {% comment %} <li class="card-list-item">
+                      <ion-icon name="speedometer-outline"></ion-icon>
+
+                      <span class="card-item-text">6.1km / 1-litre</span>
+                    </li> {% endcomment %}
+
+                    <li class="card-list-item">
+                      <ion-icon name="hardware-chip-outline"></ion-icon>
+
+                      <span class="card-item-text">Automatic</span>
+                    </li>
+
+                  </ul>
+
+                  <div class="card-price-wrapper">
+
+                    <p class="card-price">
+                      <strong>${{item.saatlik_fiyati}}</strong> / hour
+                    </p>
+                    
+
+                    <button class="btn fav-btn" aria-label="Add to favourite list">
+                      <ion-icon name="heart-outline"></ion-icon>
+                    </button>
+
+                    <button onclick="onRentalHandler({{item.id}})" class="btn">Rent now</button>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </li>
+            {% endfor %}
+
+          
+
+            
+
+          </ul>
+
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+  <!-- 
+    - #FOOTER
+  -->
+
+  <footer class="footer">
+    <div class="container">
+
+      <div class="footer-top">
+
+        <div class="footer-brand">
+         
+
+          <p class="footer-text">
+          
+          </p>
+        </div>
+
+        <ul class="footer-list">
+
+          <li>
+            <p class="footer-list-title">Company</p>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">About us</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Pricing plans</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Contacts</a>
+          </li>
+
+        </ul>
+
+        <ul class="footer-list">
+
+          <li>
+            <p class="footer-list-title">Support</p>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Help center</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Ask a question</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Privacy policy</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Terms & conditions</a>
+          </li>
+
+        </ul>
+
+        <ul class="footer-list">
+
+          <li>
+            <p class="footer-list-title">Location</p>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Ankara</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">İstanbul</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-link">Konya</a>
+          </li>
+
+       
+
+        </ul>
+
+      </div>
+
+      <div class="footer-bottom">
+
+        <ul class="social-list">
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-twitter"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-linkedin"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-skype"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="mail-outline"></ion-icon>
+            </a>
+          </li>
+
+        </ul>
+
+        <p class="copyright">
+          &copy; 2023 <a href="#">By Ekrem Tınas</a>. All Rights Reserved
+        </p>
+
+      </div>
+
+    </div>
+  </footer>
+
+
+
+
+
+  <!-- 
+    - custom js link
+  -->
+
+  <script>
+    $(document).ready(function() {
+     
+
+      $('#brands').change(function() {
+        var brand_id = $(this).val();
+        console.log(brand_id)
+        $('#models').empty();
+        if (brand_id) {
+          $.getJSON('/models_by_brand/' + brand_id, function(data) {
+            $.each(data, function(index, value) {
+              $('#models').append($('<option>', {
+                value: value?.pk,
+                text: value?.fields?.model_adi
+              }));
+            });
+          });
+        }
+      });
+    });
+  </script>
+  <script src="{% static 'js/'|add:'script.js' %}"></script>
+ 
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>
